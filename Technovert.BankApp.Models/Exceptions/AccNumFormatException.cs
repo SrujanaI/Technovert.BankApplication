@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Technovert.BankApp.Models.Exceptions
 {
-    public static class AccNumFormatException
+    public class AccNumFormatException:Exception
     {
-        public static string Exception()
+        public AccNumFormatException():base("Invalid Acc Num")
         {
-            return "Invalid Account Number";
         }
     }
+
 }

@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 
 
 
-namespace Technovert.BankApp.CLI
+namespace Technovert.BankApp.CLI.ConsoleFiles
 {
     public class PasswordEncryption
     {

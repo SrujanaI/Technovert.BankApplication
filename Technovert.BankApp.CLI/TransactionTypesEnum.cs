@@ -3,31 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technovert.BankApp.Models;
+using Technovert.BankApp.Models.Enums;
 using Technovert.BankApp.Services;
+using Technovert.BankApp.CLI.ConsoleFiles;
 
 namespace Technovert.BankApp.CLI
 {
     public class TransactionTypesEnum
     {
-        internal void TypeOfTransaction()
+        internal void TypeOfTransaction(string BankName)
         {
-            Console.WriteLine("Enter Transaction type");
+            System.Console.WriteLine("Enter Transaction type");
             StandardMessages.TransactionOptions();
-            TransactionType Option = (TransactionType)Enum.Parse(typeof(TransactionType), Console.ReadLine());
+            TransactionType Option = (TransactionType)Enum.Parse(typeof(TransactionType), System.Console.ReadLine());
             switch (Option)
             {
                 case TransactionType.Deposit:
                     DepositCLI depositCLI = new DepositCLI();
-                    depositCLI.deposit();
+                    depositCLI.deposit(BankName);
                     break;
                 case TransactionType.Withdraw:
                     WithdrawCLI withdrawCLI = new WithdrawCLI();
-                    withdrawCLI.withdraw();
+                    withdrawCLI.withdraw(BankName);
                     break;
                 case TransactionType.Transfer:
                     TransferCLI transferCLI = new TransferCLI();
-                    transferCLI.transfer();
+                    transferCLI.transfer(BankName);
                     break;
             }
         }

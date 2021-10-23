@@ -4,41 +4,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Technovert.BankApp.Models;
+using Technovert.BankApp.Models.Enums;
 
-namespace Technovert.BankApp.Services
+namespace Technovert.BankApp.Services.Services
 {
     public class TransferService
     {
-        public string Transfer(string SourceBankName, string SourceAccNum, decimal amount, string DestBankName, string DestAccNum)
+        public string Transfer(Bank sourceBank, Account sourceAccount, decimal amount, Bank destBank, Account destAccount)
         {
-            Bank srcBank = DataStore.Banks.Single(m => m.Name == SourceBankName);
-            Account srcAccount = srcBank.AccLists.Single(m => m.UserId == SourceAccNum);
-            Bank destBank = DataStore.Banks.Single(m => m.Name == DestBankName);
-            Account destAccount = destBank.AccLists.Single(m => m.UserId == DestAccNum);
+            
             StatusService status = new StatusService();
-            status.Status(srcAccount);
-            status.Status(destAccount);
-            if (srcAccount.Status == AccountStatus.Closed)
+            AccountStatus sourceStatus=status.Status(sourceAccount);
+            AccountStatus destStatus=status.Status(destAccount);
+            if (sourceStatus == AccountStatus.Closed)
             {
                 return "Source Account Doesnot exist or closed";
             }
-            if (destAccount.Status == AccountStatus.Closed)
+            if (destStatus == AccountStatus.Closed)
             {
                 return "Destination Account Doesnot exist or closed";
             }
 
-            if (amount > srcAccount.Balance)
+            if (amount > sourceAccount.Balance)
             {
                 throw new Exception("Available amount is " + amount);
             }
-            srcAccount.Balance = srcAccount.Balance - amount;
+            sourceAccount.Balance = sourceAccount.Balance - amount;
             destAccount.Balance = destAccount.Balance + amount;
-            srcAccount.UpdatedOn = DateTime.Now;
-            srcAccount.UpdatedBy = SourceAccNum;
+            sourceAccount.UpdatedOn = DateTime.Now;
+            sourceAccount.UpdatedBy = sourceAccount.AccId;
 
-            string transid = "TXN" + srcBank.BankId + srcAccount.UserId + DateTime.Now;
-            srcAccount.TransactionHistory.Add(new Transaction { BankId =  SourceBankName,DestinationBankId = DestBankName, TransId = transid, UserId = SourceAccNum,DestinationId = DestAccNum, Amount = amount, On = DateTime.Now, Type = TransactionType.Debit, Balance = srcAccount.Balance });
-            destAccount.TransactionHistory.Add(new Transaction { BankId = DestBankName , DestinationBankId = SourceBankName, TransId = transid, UserId = DestAccNum, DestinationId = SourceAccNum, Amount = amount, On = DateTime.Now, Type = TransactionType.Credit ,Balance = destAccount.Balance});
+            string transid = "TXN" + sourceBank.BankId + sourceAccount.AccId + DateTime.Now;
+            sourceAccount.TransactionHistory.Add(new Transaction { BankId =  sourceBank.BankId,DestinationBankId = destBank.BankName, TransId = transid, UserId = sourceAccount.AccId,DestinationId = destAccount.AccId, Amount = amount, On = DateTime.Now, Type = TransactionType.Debit, Balance = sourceAccount.Balance });
+            transid = "TXN" + destBank.BankId + destAccount.AccId + DateTime.Now;
+            destAccount.TransactionHistory.Add(new Transaction { BankId = destBank.BankId , DestinationBankId = sourceBank.BankName, TransId = transid, UserId = destAccount.AccId, DestinationId = sourceAccount.AccId, Amount = amount, On = DateTime.Now, Type = TransactionType.Credit ,Balance = destAccount.Balance});
             return "Transferred " + amount;
         }
     }

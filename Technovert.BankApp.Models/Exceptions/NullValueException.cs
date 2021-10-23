@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Technovert.BankApp.Models.Exceptions
 {
-    public static class NullValueException
+    public class NullValueException:Exception
     {
-        public static string Exception()
+        public NullValueException(string type):base($"You didn't enter anything, Please Enter a Valid {type}")
         {
-            return "You Didn't enter any name , Please Enter a Valid Name";
         }
     }
 }

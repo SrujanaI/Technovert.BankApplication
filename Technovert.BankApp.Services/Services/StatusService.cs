@@ -2,38 +2,33 @@
 using System.Collections.Generic;
 using System.Text;
 using Technovert.BankApp.Models;
+using Technovert.BankApp.Models.Enums;
 
 
-namespace Technovert.BankApp.Services
+namespace Technovert.BankApp.Services.Services
 {
     public class StatusService
     {
-        public void Status(Account account)
+        public AccountStatus Status(Account account)
         {
-            
-            DateTime launchDate = new DateTime(account.UpdatedOn.Year, account.UpdatedOn.Month, account.UpdatedOn.Day, account.UpdatedOn.Hour,account.UpdatedOn.Minute, account.UpdatedOn.Second);
+
+            DateTime launchDate = account.UpdatedOn;
             DateTime current = DateTime.Now;
             TimeSpan diff = current - launchDate;
            
 
-            if (diff.Days < 60)
+            if (diff.Days < 90)
             {
-                account.Status = AccountStatus.Active;
-            }
-            else if(diff.Days >= 60 && diff.Days < 90)
-            {
-                account.Status = AccountStatus.PartiallyActive;
+                return AccountStatus.Active;
             }
             else if(diff.Days >= 90 && diff.Days < 1000)
             {
-                account.Status = AccountStatus.InActive;
+                return AccountStatus.InActive;
             }
-            else if(diff.Days >= 1000)
+            else
             {
-                account.Status = AccountStatus.Closed;
-                
+                return AccountStatus.Closed;
             }
-
         }
     }
 }

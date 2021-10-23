@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Technovert.BankApp.Models.Enums
 {
-    public enum OptionSelection
+    public enum BankStaffOptionSelection
     {
-        CreateAccount = 1,
-        TypeOfTransaction,
+        Create=1,
+        UpdateAccount,
+        Delete,
+        AddCurrency,
         TransactionHistory,
-        Exit
+        Revert
     }
 }

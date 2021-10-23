@@ -10,5 +10,7 @@ namespace Technovert.BankApp.Services
     public static class DataStore
     {
         public static List<Bank> Banks = new List<Bank>();
+
+        public static Dictionary<string, decimal> currency = new Dictionary<string, decimal>() { { "INR", 1 } };
     }
 }

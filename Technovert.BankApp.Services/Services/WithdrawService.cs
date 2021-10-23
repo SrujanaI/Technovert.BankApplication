@@ -4,30 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Technovert.BankApp.Models;
+using Technovert.BankApp.Models.Enums;
 
-namespace Technovert.BankApp.Services
+namespace Technovert.BankApp.Services.Services
 {
     public class WithdrawAmount
     {
-        public string Withdraw(string BankName, string AccId, decimal amt)
+        public string Withdraw(Bank bank, Account acc, decimal amt)
         {
-            Bank b = DataStore.Banks.Single(m => m.Name == BankName);
-            Account a = b.AccLists.Single(m => m.UserId == AccId);
             StatusService status = new StatusService();
-            status.Status(a);
-            if (a.Status == AccountStatus.Closed)
+            AccountStatus s=status.Status(acc);
+            if (s == AccountStatus.Closed)
             {
                 return "Account Doesnot exist or closed";
             }
-            if (amt > a.Balance)
+            if (amt > acc.Balance)
             {
                 return "Availabe Balance is " + amt;
             }
-            a.Balance = a.Balance - amt;
-            a.UpdatedOn = DateTime.Now;
-            a.UpdatedBy = AccId;
-            string transid = "TXN" + b.BankId + a.UserId + DateTime.Now;
-            a.TransactionHistory.Add(new Transaction { BankId = BankName,TransId = transid,UserId = AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Withdraw, Balance = a.Balance }) ;
+            acc.Balance = acc.Balance - amt;
+            acc.UpdatedOn = DateTime.Now;
+            acc.UpdatedBy = acc.AccId;
+            string transid = "TXN" + bank.BankId + acc.AccId + DateTime.Now;
+            acc.TransactionHistory.Add(new Transaction { BankId = bank.BankId,TransId = transid,UserId = acc.AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Withdraw, Balance = acc.Balance }) ;
             return amt + " is Withdrawn";
         }
     }

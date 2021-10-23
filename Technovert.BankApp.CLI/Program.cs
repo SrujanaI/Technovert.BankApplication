@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Technovert.BankApp.Models;
+using Technovert.BankApp.Models.Enums;
 using Technovert.BankApp.Services;
 using System.Collections.Generic;
+using Technovert.BankApp.CLI.ConsoleFiles;
 
 namespace Technovert.BankApp.CLI
 {
@@ -11,31 +13,27 @@ namespace Technovert.BankApp.CLI
         public static void Main(string[] args)
         {
             StandardMessages.WelcomeMessage();
+            InputsValidation inputsValidation = new InputsValidation();
             int count = 0;
-            while (count == 0)
+
+            Console.WriteLine("Enter the bank name");
+            string BankName = inputsValidation.UserInputString();
+            BankName = inputsValidation.CommonValidation(BankName, "BankName");
+            Console.WriteLine("Choose option to login as 1.account holder\n 2.bank staff");
+            LoginType type = (LoginType)Enum.Parse(typeof(LoginType), System.Console.ReadLine());
+            
+            switch (type)
             {
-                StandardMessages.Options();
-                OptionSelection Option = (OptionSelection)Enum.Parse(typeof(OptionSelection), Console.ReadLine());
-                switch (Option)
-                {
-                    case OptionSelection.CreateAccount:
-                        CreateAccountCLI createAccountCLI = new CreateAccountCLI();
-                        createAccountCLI.create();
-                        break;
-                    case OptionSelection.TypeOfTransaction:
-                        TransactionTypesEnum transTypes = new TransactionTypesEnum();
-                        transTypes.TypeOfTransaction();
-                        break;
-                    case OptionSelection.TransactionHistory:
-                        TransactionHistoryCLI transactionHistoryCLI = new TransactionHistoryCLI();
-                        transactionHistoryCLI.transactionHistory();
-                        break;
-                    case OptionSelection.Exit:
-                        Console.WriteLine("Thank You!!");
-                        count = 1;
-                        break;
-                }
-            }      
+                case LoginType.AccountHolder:
+                    AccountHolderCLI accountHolderCLI = new AccountHolderCLI();
+                    accountHolderCLI.AccHolder(BankName);
+                    break;
+                case LoginType.BankStaff:
+                    BankStaffCLI bankStaffCLI = new BankStaffCLI();
+                    bankStaffCLI.BankStaffcli(BankName);
+                    break;
+            }
+               
         }
     }
 }

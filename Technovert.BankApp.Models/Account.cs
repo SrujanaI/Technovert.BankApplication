@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Technovert.BankApp.Models.Enums;
 
 namespace Technovert.BankApp.Models
 {
     public class Account
     {
         //public string BankId { get; set;}
-        public string UserId { get; set; }
-        public string Name { get; set; }
+        public string AccId { get; set; }
+        public string AccName { get; set; }
+        public string CIF { get; set; }
         public string Password { get; set; }
         public decimal Balance { get; set; }
         public string Gender { get; set; } 

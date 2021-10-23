@@ -3,52 +3,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technovert.BankApp.Services;
+using Technovert.BankApp.Services.Services;
 using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Exceptions;
 
-namespace Technovert.BankApp.CLI
+namespace Technovert.BankApp.CLI.ConsoleFiles
 {
     internal class TransactionHistoryCLI
     {
-        public void transactionHistory()
+        public void transactionHistory(string BankName)
         {
             string AccId ;
             InputsValidation inputsValidation = new InputsValidation();
             ValidationService validationService = new ValidationService();
             TransHistoryService transHistoryService = new TransHistoryService();
 
-            inputsValidation.EnterBankName("your");
-            string BankName = inputsValidation.UserInputString();
-            BankName = inputsValidation.BankNameValidation(BankName, "Bank Name");
-            
-            if (validationService.BankAvailability(BankName))
+            try
             {
+                Bank bank = validationService.BankAvailability(BankName);
                 inputsValidation.EnterAccNum("your");
                 AccId = inputsValidation.UserInputString();
-                AccId = inputsValidation.AccountIdValidation(AccId);
+                AccId=inputsValidation.CommonValidation(AccId,"AccId");
                 inputsValidation.EnterPassword();
                 string password = inputsValidation.UserInputString();
-
+                password = inputsValidation.CommonValidation(password, "password");
                 PasswordEncryption passwordEncryption = new PasswordEncryption();
                 password = passwordEncryption.EncryptPlainTextToCipherText(password);
 
-                if (validationService.AccountValidity(BankName, AccId, password))
+                try
                 {
-                    List<Transaction> list = transHistoryService.TransHistory(BankName, AccId);
+                    Account acc = validationService.AccountValidity(BankName, AccId, password);
+                    List<Transaction> list = transHistoryService.TransHistory(acc);
                     for (int i = 0; i < list.Count; i++)
                     {
-                        Console.WriteLine( "Transaction Id " + list[i].TransId + " UserId : " + list[i].UserId + "  Type : " + list[i].Type + "  Amount : " + list[i].Amount + "  Time : " + list[i].On + " Available Balance " + list[i].Balance);
+                        System.Console.WriteLine("Transaction Id " + list[i].TransId + " AccId : " + list[i].UserId + "  Type : " + list[i].Type + "  Amount : " + list[i].Amount + "  Time : " + list[i].On + " Available Balance " + list[i].Balance);
                     }
                 }
-                else
+                catch (AccNotAvailableException e)
                 {
-                    Console.WriteLine("Entered wrong account details");
+                    System.Console.WriteLine(e.Message);
                 }
             }
-            else
+            catch (BankNotAvailableException e)
             {
-                Console.WriteLine("Bank name doesn't exist");
+                System.Console.WriteLine(e.Message);
             }
         }
     }

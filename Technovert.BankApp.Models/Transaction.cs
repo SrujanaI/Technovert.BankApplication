@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Technovert.BankApp.Models.Enums;
 
 namespace Technovert.BankApp.Models
 {

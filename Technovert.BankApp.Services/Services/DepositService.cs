@@ -4,32 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Technovert.BankApp.Models;
+using Technovert.BankApp.Models.Enums;
 
-namespace Technovert.BankApp.Services
+namespace Technovert.BankApp.Services.Services
 {
     public class DepositService
     {
-        public string deposit(string BankName, string AccId, decimal amt)
+        public string deposit(string BankId, Account a, decimal amt)
         {
-            
-            
-            Bank b = DataStore.Banks.Single(m => m.Name == BankName);
-            Account a = b.AccLists.Single(m => m.UserId == AccId);
+           
             StatusService status = new StatusService();
-            status.Status(a);
-            if(a.Status == AccountStatus.Closed)
+            AccountStatus s=status.Status(a);
+            if(s==AccountStatus.Closed)
             {
                 return "Account Doesnot exist or closed";
             }
             Console.WriteLine(a.Status);
             
-            
             a.Balance = a.Balance + amt;
             a.UpdatedOn = DateTime.Now;
-            a.UpdatedBy = AccId;
+            a.UpdatedBy = a.AccId;
             
-            string transid = "TXN" + b.BankId + a.UserId + DateTime.Now;
-            a.TransactionHistory.Add(new Transaction {BankId = BankName, TransId = transid , UserId = AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Deposit, Balance = a.Balance });
+            string transid = "TXN" + BankId + a.AccId + DateTime.Now;
+            a.TransactionHistory.Add(new Transaction {BankId = BankId, TransId = transid , UserId = a.AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Deposit, Balance = a.Balance });
             
             return "Deposited " + amt;
         }

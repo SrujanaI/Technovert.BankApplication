@@ -8,9 +8,7 @@ namespace Technovert.BankApp.Models.Exceptions
 {
     public class DuplicateUserNameException : Exception
     {
-        public string Exception()
-        {
-            return "BankName Already Exists! Continue Creating your Account ";
+        public DuplicateUserNameException():base("BankName Already Exists! Continue Creating your Account "){
         }
     }
 }

@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Technovert.BankApp.Models.Exceptions
 {
-    public static class AmountFormatException
+    public class AmountFormatException:Exception
     {
-        public static string Exception()
+        public AmountFormatException():base("Invalid Amount Format")
         {
-            return "Invalid Amount Format";
         }
     }
 }

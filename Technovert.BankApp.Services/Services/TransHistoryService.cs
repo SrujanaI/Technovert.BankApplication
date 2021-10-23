@@ -4,17 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Technovert.BankApp.Models;
+using Technovert.BankApp.Models.Enums;
 
-namespace Technovert.BankApp.Services
+namespace Technovert.BankApp.Services.Services
 {
     public class TransHistoryService
     {
-        public List<Transaction> TransHistory(string BankName, string AccId)
+        public List<Transaction> TransHistory(Account acc)
         {
-            Bank b = DataStore.Banks.Single(m => m.Name == BankName);
-            Account a = b.AccLists.Single(m => m.UserId == AccId);
-            return a.TransactionHistory;
-            
+            return acc.TransactionHistory;
         }
     }
 }

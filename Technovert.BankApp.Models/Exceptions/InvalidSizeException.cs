@@ -4,11 +4,10 @@ using System.Text;
 
 namespace Technovert.BankApp.Models.Exceptions
 {
-    public static class InvalidSizeException
+    public class InvalidSizeException:Exception
     {
-        public static string  Exception(string type)
+        public InvalidSizeException(string type, int val) : base($"Please Enter {type} of Size atleast {val} characters ")
         {
-            return $"Please Enter {type} of Size atleast 4 characters ";
         }
     }
 }
