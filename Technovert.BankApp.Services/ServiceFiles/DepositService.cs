@@ -5,21 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Enums;
+using Technovert.BankApp.Models.Exceptions;
 
-namespace Technovert.BankApp.Services.Services
+namespace Technovert.BankApp.Services.ServiceFiles
 {
     public class DepositService
     {
-        public string deposit(string BankId, Account a, decimal amt)
+        public bool deposit(string BankId, Account a, decimal amt)
         {
            
             StatusService status = new StatusService();
             AccountStatus s=status.Status(a);
             if(s==AccountStatus.Closed)
             {
-                return "Account Doesnot exist or closed";
+                throw new AccountClosedException("Your");
             }
-            Console.WriteLine(a.Status);
             
             a.Balance = a.Balance + amt;
             a.UpdatedOn = DateTime.Now;
@@ -28,7 +28,7 @@ namespace Technovert.BankApp.Services.Services
             string transid = "TXN" + BankId + a.AccId + DateTime.Now;
             a.TransactionHistory.Add(new Transaction {BankId = BankId, TransId = transid , UserId = a.AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Deposit, Balance = a.Balance });
             
-            return "Deposited " + amt;
+            return true;
         }
     }
 }

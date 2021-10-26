@@ -44,6 +44,19 @@ namespace Technovert.BankApp.Services
             a.TransactionHistory.Add(new Transaction { TransId = transid , UserId = id, Amount = 0, On = DateTime.Now, Type = TransactionType.Create, Balance = 0 });
             return a;
         }
+
+        public BankStaff CreateAccountBankStaff(string BankName, string name, string Password, string mobile)
+        {
+            Bank bank = DataStore.Banks.Single(m => m.BankName == BankName);
+            if (bank.bankStaff.Any(m => m.StaffName == name))
+            {
+                throw new DuplicateUserNameException();
+            }
+            string id = this.GenerateUserId(name);
+            bank.bankStaff.Add(new BankStaff { StaffId = id, StaffName = name, password = Password, Mobile = mobile });
+            BankStaff a = bank.bankStaff.Single(m => m.StaffId == id);
+            return a;
+        }
         public string GenerateBankId(string BankName)
         {
             return $"{BankName.Substring(0,3)}{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}";

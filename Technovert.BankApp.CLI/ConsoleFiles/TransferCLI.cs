@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technovert.BankApp.Services.Services;
+using Technovert.BankApp.Services.ServiceFiles;
 using Technovert.BankApp.Models;
+using Technovert.BankApp.Services;
 using Technovert.BankApp.Models.Exceptions;
 
 namespace Technovert.BankApp.CLI.ConsoleFiles
@@ -21,35 +22,39 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
             inputsValidation.EnterBankName("Receiver");
             string DestBankName = inputsValidation.UserInputString();
-            DestBankName=inputsValidation.CommonValidation(DestBankName, "Destination Bank BankName");
+            
             try
             {
                 Bank sourceBank = validationService.BankAvailability(SourceBankName);
                 Bank destBank = validationService.BankAvailability(DestBankName);
+              
                 inputsValidation.EnterAccNum("your");
                 SourceAccNum = inputsValidation.UserInputString();
-                SourceAccNum=inputsValidation.CommonValidation(SourceAccNum, "SourceAccNum");
                 inputsValidation.EnterPassword();
                 string password = inputsValidation.UserInputString();
-                password=inputsValidation.CommonValidation(password, "password");
 
                 PasswordEncryption passwordEncryption = new PasswordEncryption();
                 password = passwordEncryption.EncryptPlainTextToCipherText(password);
 
                 inputsValidation.EnterAccNum("Receiver");
                 DestAccNum = inputsValidation.UserInputString();
-                DestAccNum=inputsValidation.CommonValidation(DestAccNum, "DestAccNum");
+
+                CurrencyCLI currencyCLI = new CurrencyCLI();
+                currencyCLI.Currency();
 
                 try
                 {
                     Account sourceAccount = validationService.AccountValidity(SourceBankName, SourceAccNum, password);
                     Account destAccount = validationService.DesAccountValidity(DestBankName, DestAccNum);
-                    inputsValidation.TransactionType("transfer");
                     while (true)
                     {
                         try
                         {
+                            string option = currencyCLI.CurrencyValidation();
+                            inputsValidation.TransactionType("transfer");
                             amount = inputsValidation.decimalInputsValidation(amount);
+                            amount = amount * DataStore.currency[option];
+
                             break;
                         }
                         catch (AmountFormatException e)
@@ -57,7 +62,14 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                             System.Console.WriteLine(e.Message);
                         }
                     }
-                    System.Console.WriteLine(transferService.Transfer(sourceBank, sourceAccount, amount, destBank, destAccount));
+                    try
+                    {
+                        Console.WriteLine(transferService.Transfer(sourceBank, sourceAccount, amount, destBank, destAccount));
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
                 catch(AccNotAvailableException e)
                 {

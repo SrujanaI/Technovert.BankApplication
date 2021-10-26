@@ -11,6 +11,7 @@ namespace Technovert.BankApp.Models.Enums
         Delete,
         AddCurrency,
         TransactionHistory,
-        Revert
+        Revert,
+        Exit
     }
 }

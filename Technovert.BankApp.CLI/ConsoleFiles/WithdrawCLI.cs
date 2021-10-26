@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technovert.BankApp.Services.Services;
+using Technovert.BankApp.Services.ServiceFiles;
 using Technovert.BankApp.Models.Exceptions;
 using Technovert.BankApp.Models;
+using Technovert.BankApp.Services;
 
 namespace Technovert.BankApp.CLI.ConsoleFiles
 {
@@ -14,7 +15,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
         public void withdraw(string BankName)
         {
             string  AccId ;
-            decimal amt = 0;
+            decimal amount = 0;
             InputsValidation inputsValidation = new InputsValidation();
             ValidationService validationService = new ValidationService();
             WithdrawAmount withdrawAmount = new WithdrawAmount();
@@ -33,15 +34,22 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                 PasswordEncryption passwordEncryption = new PasswordEncryption();
                 password = passwordEncryption.EncryptPlainTextToCipherText(password);
 
+                CurrencyCLI currencyCLI = new CurrencyCLI();
+                currencyCLI.Currency();
+
                 try
                 {
                     Account acc = validationService.AccountValidity(BankName, AccId, password);
-                    inputsValidation.TransactionType("Withdraw");
+                    
                     while (true)
                     {
                         try
                         {
-                            amt = inputsValidation.decimalInputsValidation(amt);
+                            string option = currencyCLI.CurrencyValidation();
+                            inputsValidation.TransactionType("Withdraw");
+                            amount = inputsValidation.decimalInputsValidation(amount);
+                            amount = amount * DataStore.currency[option];
+
                             break;
                         }
                         catch (AmountFormatException e)
@@ -49,7 +57,18 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                             System.Console.WriteLine(e.Message);
                         }
                     }
-                    System.Console.WriteLine(withdrawAmount.Withdraw(bank, acc, amt));
+                    try
+                    {
+                        if (withdrawAmount.Withdraw(bank, acc, amount)) Console.WriteLine("Withdraw is successful");
+                    }
+                    catch(AccountClosedException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    catch(InsufficientAmountException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
                 catch (AccNotAvailableException e)
                 {

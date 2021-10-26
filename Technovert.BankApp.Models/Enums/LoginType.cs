@@ -7,6 +7,7 @@ namespace Technovert.BankApp.Models.Enums
     public enum LoginType
         {
             AccountHolder=1,
-            BankStaff
+            BankStaff,
+            Exit
         }
 }

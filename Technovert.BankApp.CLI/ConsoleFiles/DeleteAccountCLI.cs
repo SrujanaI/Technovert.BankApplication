@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Technovert.BankApp.Services.Services;
+using Technovert.BankApp.Services.ServiceFiles;
 using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Exceptions;
 
@@ -22,7 +22,6 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                 Bank b = validationService.BankAvailability(BankName);
                 inputsValidation.EnterAccNum("your");
                 AccId = inputsValidation.UserInputString();
-                AccId = inputsValidation.CommonValidation(AccId, "AccId");
 
                 try
                 {

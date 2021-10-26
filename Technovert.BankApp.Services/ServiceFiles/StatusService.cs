@@ -5,7 +5,7 @@ using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Enums;
 
 
-namespace Technovert.BankApp.Services.Services
+namespace Technovert.BankApp.Services.ServiceFiles
 {
     public class StatusService
     {

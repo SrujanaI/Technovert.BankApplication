@@ -20,7 +20,7 @@ namespace Technovert.BankApp.CLI
                 {
                     case OptionSelection.CreateAccount:
                         CreateAccountCLI createAccountCLI = new CreateAccountCLI();
-                        createAccountCLI.create(BankName);
+                        createAccountCLI.createAccountHolder(BankName);
                         break;
                     case OptionSelection.TypeOfTransaction:
                         TransactionTypesEnum transTypes = new TransactionTypesEnum();
@@ -28,7 +28,7 @@ namespace Technovert.BankApp.CLI
                         break;
                     case OptionSelection.TransactionHistory:
                         TransactionHistoryCLI transactionHistoryCLI = new TransactionHistoryCLI();
-                        transactionHistoryCLI.transactionHistory(BankName);
+                        transactionHistoryCLI.transactionHistoryAccountHolder(BankName);
                         break;
                     case OptionSelection.Exit:
                         System.Console.WriteLine("Thank You!!");
