@@ -8,7 +8,7 @@ namespace Technovert.BankApp.Models.Exceptions
 {
     public class DuplicateBankNameException : Exception
     {
-        public DuplicateBankNameException() : base("BankName Exists")
+        public DuplicateBankNameException() : base("BankName exits")
         {
         }
     }

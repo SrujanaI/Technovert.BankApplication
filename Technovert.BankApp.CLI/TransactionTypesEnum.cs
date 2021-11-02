@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technovert.BankApp.Models.Enums;
+using Technovert.BankApp.Models;
 using Technovert.BankApp.Services;
 using Technovert.BankApp.CLI.ConsoleFiles;
 
@@ -20,15 +20,15 @@ namespace Technovert.BankApp.CLI
             {
                 case TransactionType.Deposit:
                     DepositCLI depositCLI = new DepositCLI();
-                    depositCLI.deposit(BankName);
+                    depositCLI.Deposit(BankName);
                     break;
                 case TransactionType.Withdraw:
                     WithdrawCLI withdrawCLI = new WithdrawCLI();
-                    withdrawCLI.withdraw(BankName);
+                    withdrawCLI.Withdraw(BankName);
                     break;
                 case TransactionType.Transfer:
                     TransferCLI transferCLI = new TransferCLI();
-                    transferCLI.transfer(BankName);
+                    transferCLI.Transfer(BankName);
                     break;
             }
         }

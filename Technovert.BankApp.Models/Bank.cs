@@ -6,13 +6,13 @@ namespace Technovert.BankApp.Models
 {
     public class Bank
     {
-        public string BankId { get; set; }
+        public string Id { get; set; }
         public string BankName { get; set; }
         public List<Account> AccLists { get; set; } = new List<Account>();
         public DateTime CreatedOn { get; set; }
-        public int IMPSSameBank { get; set; } = 5;
-        public int RTGS { get; set; } = 2;
-        public int IMPSOtherBank { get; set; } = 6;
+        public double IMPSSameBank { get; set; } = 0.05;
+        public double RTGS { get; set; } = 0.02;
+        public double IMPSOtherBank { get; set; } = 0.06;
         public List<BankStaff> bankStaff { get; set; } = new List<BankStaff>();
 
     }

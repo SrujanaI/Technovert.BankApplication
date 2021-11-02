@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Technovert.BankApp.Models\Technovert.BankApp.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ServiceFiles\" />
+  </ItemGroup>
+
 </Project>

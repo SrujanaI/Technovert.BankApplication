@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Technovert.BankApp.Models;
-using Technovert.BankApp.Models.Enums;
-using Technovert.BankApp.CLI.ConsoleFiles;
 
-namespace Technovert.BankApp.CLI
+namespace Technovert.BankApp.CLI.ConsoleFiles
 {
     public class AccountHolderCLI
     {
@@ -20,7 +18,7 @@ namespace Technovert.BankApp.CLI
                 {
                     case OptionSelection.CreateAccount:
                         CreateAccountCLI createAccountCLI = new CreateAccountCLI();
-                        createAccountCLI.createAccountHolder(BankName);
+                        createAccountCLI.CreateAccountHolder(BankName);
                         break;
                     case OptionSelection.TypeOfTransaction:
                         TransactionTypesEnum transTypes = new TransactionTypesEnum();
@@ -41,4 +39,6 @@ namespace Technovert.BankApp.CLI
             }
         }
     }
+
+
 }

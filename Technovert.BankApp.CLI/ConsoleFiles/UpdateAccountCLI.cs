@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Technovert.BankApp.Services.ServiceFiles;
 using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Exceptions;
+using Technovert.BankApp.Services;
 
 namespace Technovert.BankApp.CLI.ConsoleFiles
 {
@@ -14,7 +14,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
             ValidationService validationService = new ValidationService();
             DepositService depositAmount = new DepositService();
             InputsValidation inputsValidation = new InputsValidation();
-            
+
             string AccId;
 
             try
@@ -26,7 +26,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
                 try
                 {
-                    Account account=validationService.UpdateorDeleteAccountValidity(BankName, AccId);
+                    Account account = validationService.UpdateorDeleteAccountValidity(BankName, AccId);
                     Console.WriteLine("Choose option to update 1.Mobile\n 2.Password\n 3.Gender");
                     int option = Convert.ToInt32(Console.ReadLine());
                     Console.WriteLine("Enter updated value");
@@ -43,7 +43,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                         account.Gender = Console.ReadLine();
                     }
                 }
-                catch (AccNotAvailableException e)
+                catch (AccountNotAvailableException e)
                 {
                     System.Console.WriteLine(e.Message);
                 }

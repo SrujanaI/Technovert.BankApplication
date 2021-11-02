@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technovert.BankApp.Models.Enums
+namespace Technovert.BankApp.Models
 {
     public enum OptionSelection
     {

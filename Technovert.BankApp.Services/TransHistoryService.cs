@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Technovert.BankApp.Models;
-using Technovert.BankApp.Models.Enums;
 
-namespace Technovert.BankApp.Services.ServiceFiles
+namespace Technovert.BankApp.Services
 {
     public class TransHistoryService
     {
-        public List<Transaction> TransHistory(Account acc)
+        public List<Transaction> TransHistory(Account account)
         {
-            return acc.TransactionHistory;
+            return account.TransactionHistory;
         }
     }
 }

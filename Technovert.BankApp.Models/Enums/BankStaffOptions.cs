@@ -4,14 +4,17 @@ using System.Text;
 
 namespace Technovert.BankApp.Models.Enums
 {
-    public enum BankStaffOptionSelection
+    public enum BankStaffOptions
     {
-        Create=1,
+
+        CreateBank = 0,
+        CreateAccount,
         UpdateAccount,
         Delete,
         AddCurrency,
         TransactionHistory,
         Revert,
         Exit
+
     }
 }

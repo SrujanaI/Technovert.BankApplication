@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technovert.BankApp
+namespace Technovert.BankApp.CLI
 {
     internal class StandardMessages
     {

@@ -9,9 +9,9 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 {
     internal class InputsValidation
     {
-        public decimal decimalInputsValidation(decimal amt)
+        public decimal DecimalInputsValidation(decimal amt)
         {
-            var num = System.Console.ReadLine();
+            var num = Console.ReadLine();
             if (!decimal.TryParse(num, out amt))
             {
                 throw new AmountFormatException();
@@ -22,25 +22,25 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
         }
         public bool BankNameValidation(string BankName, string type)
         {
-            if(BankName == "")
+            if (BankName == "")
             {
-                throw new NullValueException(type);
+                throw new NullValueException($"You didn't enter anything, Please Enter a Valid {type}");
             }
-            if(BankName.Length < 4)
+            if (BankName.Length < 4)
             {
-                throw new InvalidSizeException(type,4);
+                throw new InvalidSizeException($"Please Enter {type} of Size atleast 4 characters ");
             }
             return true;
         }
         public bool MobileNumValidation(string Mobile)
         {
-            if(Mobile == "")
+            if (Mobile == "")
             {
-                throw new NullValueException("Mobile");
+                throw new NullValueException("You didn't enter anything, Please Enter a Valid Mobile");
             }
-            if(Mobile.Length > 10 || Mobile.Length < 10)
+            if (Mobile.Length > 10 || Mobile.Length < 10)
             {
-                throw new InvalidSizeException("Mobile",10);
+                throw new InvalidSizeException("Please Enter Mobile of Size atleast 10 characters ");
             }
             return true;
         }
@@ -48,9 +48,9 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
         {
             if (Gender == "")
             {
-                throw new NullValueException("Gender");
+                throw new NullValueException("You didn't enter anything, Please Enter a Valid Gender");
             }
-            while (Gender != "Male" || Gender != "Female" || Gender != "Other" )
+            while (Gender != "Male" || Gender != "Female" || Gender != "Other")
             {
                 if (Gender == "Male" || Gender == "Female" || Gender == "Other")
                     break;
@@ -62,14 +62,14 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
         public bool AccountIdValidation(string AccId)
         {
-            if(AccId == "")
+            if (AccId == "")
             {
-                throw new NullValueException("AccId");
+                throw new NullValueException("You didn't enter anything, Please Enter a Valid Account Id");
             }
             return true;
         }
 
-        public string CommonValidation(string s,string type)
+        public string CommonValidation(string s, string type)
         {
             while (true)
             {
@@ -77,7 +77,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                 {
                     if (type == "AccId")
                     {
-                        if(AccountIdValidation(s)) return s;
+                        if (AccountIdValidation(s)) return s;
                     }
                     if (type == "BankName")
                     {
@@ -91,19 +91,19 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                     {
                         if (BankNameValidation(s, type)) return s;
                     }
-                    if(type=="Account Name")
+                    if (type == "Account Name")
                     {
                         if (BankNameValidation(s, type)) return s;
                     }
                 }
                 catch (InvalidSizeException e)
                 {
-                    System.Console.WriteLine(e.Message);
+                    Console.WriteLine(e.Message);
                     s = UserInputString();
                 }
                 catch (NullValueException e)
                 {
-                    System.Console.WriteLine(e.Message);
+                    Console.WriteLine(e.Message);
                     s = UserInputString();
                 }
             }
@@ -111,31 +111,31 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
         public void TransactionType(string type)
         {
-            System.Console.WriteLine($"Enter amount to {type}");
+            Console.WriteLine($"Enter amount to {type}");
         }
 
         public string UserInputString()
         {
-            return System.Console.ReadLine();
+            return Console.ReadLine();
         }
 
         public void EnterBankName(string type)
         {
-            System.Console.WriteLine($"Please Enter {type} BankName : ");
+            Console.WriteLine($"Please Enter {type} BankName : ");
         }
 
         public void EnterAccNum(string type)
         {
-            System.Console.WriteLine($"Please Enter {type} Account Id : ");
+            Console.WriteLine($"Please Enter {type} Account Id : ");
         }
         public void EnterAccHolderName()
         {
-            System.Console.WriteLine("Please Enter your Name : ");
+            Console.WriteLine("Please Enter your Name : ");
         }
 
         public void EnterPassword()
         {
-            System.Console.WriteLine("Please Enter your Password : ");
+            Console.WriteLine("Please Enter your Password : ");
         }
     }
 }

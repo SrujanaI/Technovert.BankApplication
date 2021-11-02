@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technovert.BankApp.Models.Enums
+namespace Technovert.BankApp.Models
 {
     public enum TransactionType
     {
@@ -13,7 +13,8 @@ namespace Technovert.BankApp.Models.Enums
         Withdraw,
         Transfer,
         Credit,
-        Debit
+        Debit,
+        Revert
     }
 
 }
