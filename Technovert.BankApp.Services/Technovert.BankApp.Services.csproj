@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Technovert.BankApp.Models\Technovert.BankApp.Models.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ServiceFiles\" />
+    <ProjectReference Include="..\Technovert.BankApp.Models\Technovert.BankApp.Models.csproj" />
   </ItemGroup>
 
 </Project>

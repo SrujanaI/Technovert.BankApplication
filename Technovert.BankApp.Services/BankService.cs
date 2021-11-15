@@ -1,7 +1,11 @@
 ﻿using System;
+using Newtonsoft.Json;
+using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Exceptions;
+using Newtonsoft.Json.Linq;
 
 namespace Technovert.BankApp.Services
 {
@@ -10,6 +14,23 @@ namespace Technovert.BankApp.Services
 
         public bool AddBank(string name)
         {
+            /*Object data = JObject.Parse(@"C: \Users\DELL\Downloads\Technovert.BankApplication\bank.json");
+            //var s = data.SelectToken("BankName").Value<string>();
+            //var obj = JSON.parse(@"C: \Users\DELL\Downloads\Technovert.BankApplication\bank.json");
+            //var length = Object.Keys(data).length;
+
+            var countKey = Object.keys(data).length;
+
+            int i = 0;
+            while (i < data) {
+                
+
+                if (name == data[i].BankName) return false;
+                i++;
+            }*/
+
+
+            
             if (DataStore.Banks.Any(m => m.BankName == name))
             {
                 //throw new DuplicateBankNameException();
@@ -22,6 +43,9 @@ namespace Technovert.BankApp.Services
                 CreatedOn = DateTime.Now
 
             };
+            string json = JsonConvert.SerializeObject(bank);
+            File.AppendAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);
+            
             DataStore.Banks.Add(bank);//return
             return true;
         }
@@ -37,6 +61,9 @@ namespace Technovert.BankApp.Services
             Account account = bank.AccLists.Single(m => m.AccId == id);
             string transid = "TXN" + bank.Id + account.AccId + DateTime.Now;
             account.TransactionHistory.Add(new Transaction { TransId = transid, UserId = id, Amount = 0, On = DateTime.Now, Type = TransactionType.Create, Balance = 0 });
+
+            string json = JsonConvert.SerializeObject(account);
+            File.AppendAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\accountHolder.json", json);
             return account;
         }
 
@@ -50,6 +77,8 @@ namespace Technovert.BankApp.Services
             string id = this.GenerateUserId(name);
             bank.bankStaff.Add(new BankStaff { StaffId = id, StaffName = name, password = Password, Mobile = mobile });
             BankStaff bankStaff = bank.bankStaff.Single(m => m.StaffId == id);
+            string json = JsonConvert.SerializeObject(bankStaff);
+            File.AppendAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bankStaff.json", json);
             return bankStaff;
         }
         private string GenerateBankId(string BankName)
