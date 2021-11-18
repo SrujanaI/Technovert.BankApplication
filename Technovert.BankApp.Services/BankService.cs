@@ -1,6 +1,8 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.IO;
+using System.Text;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using Technovert.BankApp.Models;
@@ -11,25 +13,9 @@ namespace Technovert.BankApp.Services
 {
     public class BankService
     {
-
+        
         public bool AddBank(string name)
         {
-            /*Object data = JObject.Parse(@"C: \Users\DELL\Downloads\Technovert.BankApplication\bank.json");
-            //var s = data.SelectToken("BankName").Value<string>();
-            //var obj = JSON.parse(@"C: \Users\DELL\Downloads\Technovert.BankApplication\bank.json");
-            //var length = Object.Keys(data).length;
-
-            var countKey = Object.keys(data).length;
-
-            int i = 0;
-            while (i < data) {
-                
-
-                if (name == data[i].BankName) return false;
-                i++;
-            }*/
-
-
             
             if (DataStore.Banks.Any(m => m.BankName == name))
             {
@@ -43,10 +29,27 @@ namespace Technovert.BankApp.Services
                 CreatedOn = DateTime.Now
 
             };
-            string json = JsonConvert.SerializeObject(bank);
-            File.AppendAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);
+
             
-            DataStore.Banks.Add(bank);//return
+            DataStore.Banks.Add(bank);
+            string json = JsonConvert.SerializeObject(DataStore.Banks);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);//return
+            if (File.Exists(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json"))
+            {
+                var list = JsonConvert.DeserializeObject<List<Bank>>(json);
+
+                using (StreamReader sr = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json"))
+                {
+                    int i = 0;
+                    while (i < list.Count)
+                    {
+                        Console.WriteLine(list[i].Id);
+                        i++;
+                    }
+
+                }
+
+            }
             return true;
         }
         public Account CreateAccount(string BankName, string name, string Password, string mobile, string gender)
@@ -58,12 +61,13 @@ namespace Technovert.BankApp.Services
             }
             string id = this.GenerateUserId(name);
             bank.AccLists.Add(new Account { AccId = id, AccName = name, Balance = 0, Password = Password, Mobile = mobile, UpdatedOn = DateTime.Now, Gender = gender, CreatedBy = name, CreatedOn = DateTime.Now, CIF = GenerateCIF() });
+            string json = JsonConvert.SerializeObject(DataStore.Banks);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json",json);
             Account account = bank.AccLists.Single(m => m.AccId == id);
             string transid = "TXN" + bank.Id + account.AccId + DateTime.Now;
             account.TransactionHistory.Add(new Transaction { TransId = transid, UserId = id, Amount = 0, On = DateTime.Now, Type = TransactionType.Create, Balance = 0 });
-
-            string json = JsonConvert.SerializeObject(account);
-            File.AppendAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\accountHolder.json", json);
+            json = JsonConvert.SerializeObject(DataStore.Banks);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);
             return account;
         }
 
@@ -77,8 +81,8 @@ namespace Technovert.BankApp.Services
             string id = this.GenerateUserId(name);
             bank.bankStaff.Add(new BankStaff { StaffId = id, StaffName = name, password = Password, Mobile = mobile });
             BankStaff bankStaff = bank.bankStaff.Single(m => m.StaffId == id);
-            string json = JsonConvert.SerializeObject(bankStaff);
-            File.AppendAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bankStaff.json", json);
+            string json = JsonConvert.SerializeObject(DataStore.Banks);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);
             return bankStaff;
         }
         private string GenerateBankId(string BankName)

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Exceptions;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Technovert.BankApp.Services
 {
@@ -29,6 +31,8 @@ namespace Technovert.BankApp.Services
             acc.UpdatedBy = acc.AccId;
             string transid = "TXN" + bank.Id + acc.AccId + DateTime.Now;
             acc.TransactionHistory.Add(new Transaction { BankId = bank.Id, TransId = transid, UserId = acc.AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Withdraw, Balance = acc.Balance });
+            string json = JsonConvert.SerializeObject(DataStore.Banks);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);
             return true;
         }
     }

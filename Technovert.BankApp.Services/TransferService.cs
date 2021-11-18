@@ -46,14 +46,14 @@ namespace Technovert.BankApp.Services
 
             string transid = "TXN" + sourceBank.Id + sourceAccount.AccId + DateTime.Now;
             sourceAccount.TransactionHistory.Add(new Transaction { BankId = sourceBank.Id, DestinationBankId = destBank.Id, TransId = transid, UserId = sourceAccount.AccId, DestinationId = destAccount.AccId, Amount = amount, On = DateTime.Now, Type = TransactionType.Debit, Balance = sourceAccount.Balance });
-
-            string json = JsonConvert.SerializeObject(sourceAccount.TransactionHistory);
-            File.AppendAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\srcTransaction.json", json);
+            string json = JsonConvert.SerializeObject(DataStore.Banks);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);
+            
             transid = "TXN" + destBank.Id + destAccount.AccId + DateTime.Now;
             destAccount.TransactionHistory.Add(new Transaction { BankId = destBank.Id, DestinationBankId = sourceBank.Id, TransId = transid, UserId = destAccount.AccId, DestinationId = sourceAccount.AccId, Amount = amount, On = DateTime.Now, Type = TransactionType.Credit, Balance = destAccount.Balance });
-            
-            json = JsonConvert.SerializeObject(destAccount.TransactionHistory);
-            File.AppendAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\destTransaction.json", json);
+            json = JsonConvert.SerializeObject(DataStore.Banks);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);
+
             return true;
         }
     }
