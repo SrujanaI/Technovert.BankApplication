@@ -31,8 +31,11 @@ namespace Technovert.BankApp.Services
             acc.UpdatedBy = acc.AccId;
             string transid = "TXN" + bank.Id + acc.AccId + DateTime.Now;
             acc.TransactionHistory.Add(new Transaction { BankId = bank.Id, TransId = transid, UserId = acc.AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Withdraw, Balance = acc.Balance });
+            var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            var directory = Path.GetDirectoryName(location);
+            var path = Path.Combine(directory, "../Bank.json");
             string json = JsonConvert.SerializeObject(DataStore.Banks);
-            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\bank.json", json);
+            File.WriteAllText(path, json);
             return true;
         }
     }
