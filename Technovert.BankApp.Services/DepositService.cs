@@ -16,8 +16,8 @@ namespace Technovert.BankApp.Services
         {
 
             StatusService status = new StatusService();
-            AccountStatus stat = status.Status(account);
-            if (stat == AccountStatus.Closed)
+            AccountStatus accStatus = status.Status(account);
+            if (accStatus == AccountStatus.Closed)
             {
                 throw new AccountClosedException("Your Account Is Closed");
             }
@@ -28,11 +28,11 @@ namespace Technovert.BankApp.Services
 
             string transid = "TXN" + BankId + account.AccId + DateTime.Now;
             account.TransactionHistory.Add(new Transaction { BankId = BankId, TransId = transid, UserId = account.AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Deposit, Balance = account.Balance });
-            var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            /*var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
             var directory = Path.GetDirectoryName(location);
-            var path = Path.Combine(directory, "../Bank.json");
+            var path = Path.Combine(directory, "../Bank.json");*/
             string json = JsonConvert.SerializeObject(DataStore.Banks);
-            File.WriteAllText(path, json);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
             return true;
         }
     }

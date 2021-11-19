@@ -30,17 +30,31 @@ namespace Technovert.BankApp.Services
 
             };
 
-            var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            /*var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
             var directory = Path.GetDirectoryName(location);
-            var path = Path.Combine(directory, "../Bank.json");
+            var path = Path.Combine(directory, "../Bank.json");*/
             DataStore.Banks.Add(bank);
-            string json = JsonConvert.SerializeObject(DataStore.Banks);
-            File.WriteAllText(path, json);//return
-            if (File.Exists(path))
+            string json;
+            if (!(File.Exists(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json")))
             {
-                var list = JsonConvert.DeserializeObject<List<Bank>>(json);
-
-                using (StreamReader sr = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services/Bank.json"))
+                json = JsonConvert.SerializeObject(DataStore.Banks);
+                //File.Create(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json").Close();
+                File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
+            }
+            else
+            {
+                using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
+                {
+                    json = reader.ReadToEnd();
+                    reader.Close();
+                    var list = JsonConvert.DeserializeObject<List<Bank>>(json);
+                    list.Add(bank);
+                    json = JsonConvert.SerializeObject(list);
+                    File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
+                    
+                }
+            }
+                /*using (StreamReader sr = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services/Bank.json"))
                 {
                     int i = 0;
                     while (i < list.Count)
@@ -49,9 +63,8 @@ namespace Technovert.BankApp.Services
                         i++;
                     }
 
-                }
+                }*/
 
-            }
             return true;
         }
         public Account CreateAccount(string BankName, string name, string Password, string mobile, string gender)
@@ -68,12 +81,12 @@ namespace Technovert.BankApp.Services
             var directory = Path.GetDirectoryName(location);
             var path = Path.Combine(directory, "../Bank.json");
             string json = JsonConvert.SerializeObject(DataStore.Banks);
-            File.WriteAllText(path, json);
+            File.AppendAllText(path, json);
             Account account = bank.AccLists.Single(m => m.AccId == id);
             string transid = "TXN" + bank.Id + account.AccId + DateTime.Now;
             account.TransactionHistory.Add(new Transaction { TransId = transid, UserId = id, Amount = 0, On = DateTime.Now, Type = TransactionType.Create, Balance = 0 });
             json = JsonConvert.SerializeObject(DataStore.Banks);
-            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services/Bank.json", json);
+            File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Service\Bank.json", json);
             return account;
         }
 

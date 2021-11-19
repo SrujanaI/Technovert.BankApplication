@@ -7,7 +7,7 @@ using Technovert.BankApp.Models;
 
 namespace Technovert.BankApp.Services
 {
-    public static class DataStore
+    public class DataStore
     {
         public static List<Bank> Banks = new List<Bank>();
 
