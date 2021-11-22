@@ -32,7 +32,9 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                     Console.WriteLine("Enter updated value");
                     if (option == 1)
                     {
-                        account.Mobile = Console.ReadLine();
+                        string mobile = Console.ReadLine();
+                        account.Mobile = mobile;
+                        validationService.UpdateMobile(mobile, BankName, AccId);
                     }
                     else if (option == 2)
                     {

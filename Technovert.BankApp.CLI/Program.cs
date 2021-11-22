@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using Technovert.BankApp.Models.Enums;
 using Technovert.BankApp.Models.Exceptions;
 using Technovert.BankApp.CLI.ConsoleFiles;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Technovert.BankApp.CLI
 {
@@ -25,22 +28,43 @@ namespace Technovert.BankApp.CLI
                 switch (type)
                 {
                     case UserType.AccountHolder:
-                        Console.WriteLine("Select bank name from available banks");//for loop
-                        //for (int i = 0; i < DataStore.Banks.Count; i++) Console.WriteLine(DataStore.Banks[i]+ " ");
-                        foreach (Bank i in DataStore.Banks)
+                        Console.WriteLine("Select bank name from available banks");
+
+                        using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
                         {
-                            Console.WriteLine(i.BankName);
-                        }
-                        Console.WriteLine("Enter the bank name");
-                        BankName = inputsValidation.UserInputString();
-                        while (!(DataStore.Banks.Any(m => m.BankName == BankName)))
-                        {
-                            Console.WriteLine("Select bank name from available banks" + DataStore.Banks);
+                            string json = reader.ReadToEnd();
+                            reader.Close();
+                            var list = JsonConvert.DeserializeObject<List<Bank>>(json);
+
+                            foreach (Bank ba in list)
+                            {
+                                Console.WriteLine(ba.BankName);
+                            }
+
+                            bool value = false;
                             Console.WriteLine("Enter the bank name");
                             BankName = inputsValidation.UserInputString();
+                            while (!value)
+                            {
+                                foreach (Bank ba in list)
+                                {
+                                    if ((ba.BankName == BankName))
+                                    {
+                                        value = true;
+                                        break;
+                                    }
+                                }
+                                if (!value)
+                                {
+                                    Console.WriteLine("Select bank name from available banks");
+                                    foreach (Bank ba in list) Console.WriteLine(ba.BankName+"\n");
+                                    Console.WriteLine("Enter the bank name");
+                                    BankName = inputsValidation.UserInputString();
+                                }
+                            }
+                            AccountHolderCLI accountHolderCLI = new AccountHolderCLI();
+                            accountHolderCLI.AccHolder(BankName);
                         }
-                        AccountHolderCLI accountHolderCLI = new AccountHolderCLI();
-                        accountHolderCLI.AccHolder(BankName);
                         break;
                     case UserType.BankStaff:
 

@@ -57,7 +57,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                         break;
                     case BankStaffOptions.AddCurrency:
                         Console.WriteLine("Enter currency type and it's factor to convert to INR");
-                        DataStore.currency.Add(Console.ReadLine(), Convert.ToDecimal(Console.ReadLine()));
+                        //DataStore.currency.Add(Console.ReadLine(), Convert.ToDecimal(Console.ReadLine()));
                         break;
                     case BankStaffOptions.TransactionHistory:
                         TransactionHistoryCLI transactionHistoryCLI = new TransactionHistoryCLI();
