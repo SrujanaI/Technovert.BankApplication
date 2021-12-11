@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Technovert.BankApp.Services;
 using Technovert.BankApp.Models.Exceptions;
 using Technovert.BankApp.Models;
+using DatabaseBank;
 
 
 namespace Technovert.BankApp.CLI.ConsoleFiles
@@ -14,6 +15,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
     {
         public void Deposit(string BankName)
         {
+            SQLCommands sQLCommands = new SQLCommands();
             ValidationService validationService = new ValidationService();
             DepositService depositAmount = new DepositService();
             InputsValidation inputsValidation = new InputsValidation();
@@ -24,7 +26,8 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
             try
             {
-                Bank bank = validationService.BankAvailability(BankName);
+                validationService.BankAvailability(BankName);
+                string BankId = sQLCommands.SelectBankProperty(BankName, "Id");
                 inputsValidation.EnterAccNum("your");
                 AccId = inputsValidation.UserInputString();
                 AccId = inputsValidation.CommonValidation(AccId, "AccId");
@@ -35,7 +38,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                 {
                     CurrencyCLI currencyCLI = new CurrencyCLI();
                     currencyCLI.Currency();
-                    Account account = validationService.DepositAccountValidity(BankName, AccId, CIF);
+                    validationService.DepositAccountValidity(BankName, AccId, CIF);
 
 
                     while (true)
@@ -55,7 +58,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                     }
                     try
                     {
-                        if (depositAmount.Deposit(bank.Id, account, amount))
+                        if (depositAmount.Deposit(BankId, AccId, amount))
                             Console.WriteLine("Deposited amount");
                         else
                             Console.WriteLine("Depositing money failed");

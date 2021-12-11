@@ -5,14 +5,45 @@ using Technovert.BankApp.Services;
 using Technovert.BankApp.Models.Exceptions;
 using Technovert.BankApp.Models;
 using System.Linq;
+using DatabaseBank;
 
 namespace Technovert.BankApp.CLI.ConsoleFiles
 {
     public class RevertCLI
     {
+        SQLCommands sQLCommands = new SQLCommands();
+        InputsValidation inputsValidation = new InputsValidation();
         public bool Revert(string BankName)
         {
-            ValidationService validationService = new ValidationService();
+            string AccId,TransId;
+            if (sQLCommands.CheckBankAvailability(BankName))
+            {
+                inputsValidation.EnterAccNum("your");
+                AccId = inputsValidation.UserInputString();
+                AccId = inputsValidation.CommonValidation(AccId, "AccId");
+                if (sQLCommands.CheckAccountAvailability(AccId))
+                {
+                    Console.WriteLine("Enter Transaction Id : ");
+                    TransId = inputsValidation.UserInputString();
+                    Tuple<string,decimal> tp= sQLCommands.SelectRevertTransaction(TransId);
+
+                    sQLCommands.UpdateAccount(AccId, tp.Item2, DateTime.Now);
+                    sQLCommands.UpdateAccount(tp.Item1, (-1 * tp.Item2), DateTime.Now);
+
+                    Console.WriteLine("Revert Transaction is successful");
+                }
+                else
+                {
+                    throw new AccountNotAvailableException();
+                }
+            }
+            else
+            {
+                throw new BankNotAvailableException();
+            }
+            return true;
+        }
+            /*ValidationService validationService = new ValidationService();
             InputsValidation inputsValidation = new InputsValidation();
             string Id;
 
@@ -80,6 +111,6 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
             }
 
 
-        }
+        }*/
     }
 }

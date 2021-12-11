@@ -24,8 +24,8 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
             try
             {
-                Bank sourceBank = validationService.BankAvailability(SourceBankName);
-                Bank destBank = validationService.BankAvailability(DestBankName);
+                validationService.BankAvailability(SourceBankName);
+                validationService.BankAvailability(DestBankName);
 
                 inputsValidation.EnterAccNum("your");
                 SourceAccNum = inputsValidation.UserInputString();
@@ -43,8 +43,8 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
                 try
                 {
-                    Account sourceAccount = validationService.AccountValidity(SourceBankName, SourceAccNum, password);
-                    Account destAccount = validationService.DesAccountValidity(DestBankName, DestAccNum);
+                    validationService.AccountValidity(SourceBankName, SourceAccNum, password);
+                    validationService.DesAccountValidity(DestBankName, DestAccNum);
                     while (true)
                     {
                         try
@@ -63,7 +63,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                     }
                     try
                     {
-                        if (transferService.Transfer(sourceBank, sourceAccount, amount, destBank, destAccount))
+                        if (transferService.Transfer(SourceBankName, SourceAccNum, amount, DestBankName, DestAccNum))
                         {
                             Console.WriteLine("Transfer Successfull");
                         }

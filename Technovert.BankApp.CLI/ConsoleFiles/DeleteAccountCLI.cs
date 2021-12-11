@@ -7,6 +7,7 @@ using Technovert.BankApp.Services;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using DatabaseBank;
 
 namespace Technovert.BankApp.CLI.ConsoleFiles
 {
@@ -14,50 +15,32 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
     {
         public void DeleteAcc(string BankName)
         {
+            SQLCommands sQLCommands = new SQLCommands();
             ValidationService validationService = new ValidationService();
             DepositService depositAmount = new DepositService();
             InputsValidation inputsValidation = new InputsValidation();
-            string AccId;
+            string AccountId;
 
-            try
+
+            if (sQLCommands.CheckBankAvailability(BankName))
             {
-                Bank b = validationService.BankAvailability(BankName);
+                string BankId = sQLCommands.SelectBankProperty(BankName, "Id");
                 inputsValidation.EnterAccNum("your");
-                AccId = inputsValidation.UserInputString();
-                using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
+                AccountId = inputsValidation.UserInputString();
+                if (sQLCommands.CheckAccountAvailability(AccountId))
                 {
-                    try
-                    {
-                        string json = reader.ReadToEnd();
-                        reader.Close();
-                        var list = JsonConvert.DeserializeObject<List<Bank>>(json);
-                        foreach (Bank ba in list)
-                        {
-                            if (ba.BankName == BankName)
-                            {
-                                Account ac = ba.AccLists.Single(m => m.AccId == AccId);
-                                ba.AccLists.Remove(ac);
-                            }
-                        }
-                        json = JsonConvert.SerializeObject(list);
-                        File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
-                    }
-                    /*try
-                    {
-                        Account account = validationService.UpdateorDeleteAccountValidity(BankName, AccId);
-                        b.AccLists.Remove(account);
-                    }*/
-                    catch (AccountNotAvailableException e)
-                    {
-                        System.Console.WriteLine(e.Message);
-                    }
+                    sQLCommands.DeleteAccount(AccountId);
                 }
-
+                else
+                {
+                    Console.WriteLine("Account not available");
+                }
             }
-            catch (BankNotAvailableException e)
+            else
             {
-                System.Console.WriteLine(e.Message);
+                throw new NullValueException("bank");
             }
+
         }
     }
 }

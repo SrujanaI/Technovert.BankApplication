@@ -7,53 +7,27 @@ using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Exceptions;
 using System.IO;
 using Newtonsoft.Json;
+using DatabaseBank;
 
 namespace Technovert.BankApp.Services
 {
     public class WithdrawAmount
     {
-        public bool Withdraw(Bank bank, Account acc, decimal amt)
+        public bool Withdraw(string BankName, string AccId, decimal amt)
         {
+            SQLCommands sQLCommands = new SQLCommands();
             StatusService status = new StatusService();
-            AccountStatus s = status.Status(acc);
+            /*AccountStatus s = status.Status(acc);
             if (s == AccountStatus.Closed)
             {
                 throw new AccountClosedException("Your Account Is Closed");
-                /*return "Account Doesnot exist or closed"*/
-            }
-            using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
-            {
-                string json = reader.ReadToEnd();
-                reader.Close();
-                var list = JsonConvert.DeserializeObject<List<Bank>>(json);
-                if (amt > acc.Balance)
-                {
-                    throw new InsufficientAmountException("Available balance is less than required");
-                //return "Availabe Balance is " + amt;
-                }
-                string transid;
-                acc.Balance = acc.Balance - amt;
-                acc.UpdatedOn = DateTime.Now;
-                acc.UpdatedBy = acc.AccId;
-                foreach (Bank b in list)
-                {
-                    if (b.Id == bank.Id)
-                    {
-                        Account ac = b.AccLists.Single(m => m.AccName == acc.AccName);
-                        ac.Balance = acc.Balance;
-                        ac.UpdatedBy = acc.AccId;
-                        ac.UpdatedOn = DateTime.Now;
-                        transid = "TXN" + bank.Id + acc.AccId + DateTime.Now;
-                        ac.TransactionHistory.Add(new Transaction { BankId = bank.Id, TransId = transid, UserId = acc.AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Deposit, Balance = acc.Balance });
-                    }
-                }
-                transid = "TXN" + bank.Id + acc.AccId + DateTime.Now;
-                acc.TransactionHistory.Add(new Transaction { BankId = bank.Id, TransId = transid, UserId = acc.AccId, Amount = amt, On = DateTime.Now, Type = TransactionType.Withdraw, Balance = acc.Balance });
-            
-                json = JsonConvert.SerializeObject(list);
-                File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
-            }
+                *//*return "Account Doesnot exist or closed"*//*
+            }*/
+            string transid = "TXN" + sQLCommands.SelectBankProperty(BankName, "Id") + sQLCommands.SelectAccountProperty(AccId,"Id") + DateTime.Now;
+            sQLCommands.UpdateAccount(sQLCommands.SelectAccountProperty(AccId, "Id"), (-1*amt), DateTime.Now);
+            sQLCommands.InsertTransaction(transid, sQLCommands.SelectAccountProperty(AccId, "Id"), sQLCommands.SelectBankProperty(BankName, "Id"), Convert.ToDecimal(sQLCommands.SelectAccountProperty(AccId,"Balance")) - amt, DateTime.Now, amt, "", "");
             return true;
+            
         }
     }
 }

@@ -9,6 +9,5 @@ namespace Technovert.BankApp.Models
         Active,
         Closed
 
-
     }
 }

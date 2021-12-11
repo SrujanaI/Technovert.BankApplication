@@ -5,10 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.27" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DatabaseBank\DatabaseBank.csproj" />
     <ProjectReference Include="..\Technovert.BankApp.Models\Technovert.BankApp.Models.csproj" />
   </ItemGroup>
 

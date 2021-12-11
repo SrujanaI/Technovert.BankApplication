@@ -7,16 +7,18 @@ using Newtonsoft.Json;
 using System.IO;
 using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Exceptions;
+using DatabaseBank;
 
 namespace Technovert.BankApp.Services
 {
     public class TransferService
     {
-        public bool Transfer(Bank sourceBank, Account sourceAccount, decimal amount, Bank destBank, Account destAccount)
+        public bool Transfer(string sourceBankName, string sourceAccountId, decimal amount, string destBankName, string destAccountId)
         {
             decimal charges;
+            SQLCommands sQLCommands = new SQLCommands();
             StatusService status = new StatusService();
-            AccountStatus sourceStatus = status.Status(sourceAccount);
+            /*AccountStatus sourceStatus = status.Status(sourceAccount);
             AccountStatus destStatus = status.Status(destAccount);
             if (sourceStatus == AccountStatus.Closed)
             {
@@ -25,54 +27,27 @@ namespace Technovert.BankApp.Services
             if (destStatus == AccountStatus.Closed)
             {
                 throw new AccountClosedException("Deposit Account Is Closed");
-            }
-            if (sourceBank.BankName == destBank.BankName)
+            }*/
+            if (sourceBankName == destBankName)
             {
-                charges = Convert.ToDecimal(sourceBank.IMPSSameBank) * amount;
+                charges = Convert.ToDecimal(sQLCommands.SelectBankProperty(sourceBankName, "IMPSSameBank")) * amount;
             }
             else
             {
-                charges = Convert.ToDecimal(sourceBank.IMPSOtherBank) * amount + Convert.ToDecimal(sourceBank.RTGS) * amount;
+                charges = Convert.ToDecimal(sQLCommands.SelectBankProperty(sourceBankName, "IMPSSameBank")) * amount + Convert.ToDecimal(sQLCommands.SelectBankProperty(sourceBankName, "RTGS")) * amount;
             }
-            if ((amount + charges) > sourceAccount.Balance)
+            if ((amount + charges) > Convert.ToDecimal(sQLCommands.SelectAccountProperty(sourceAccountId,"Balance")))
             {
-                throw new Exception("Available amount is " + sourceAccount.Balance);
+                throw new Exception("Available amount is " + Convert.ToDecimal(sQLCommands.SelectAccountProperty(sourceAccountId, "Balance")));
             }
-            using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
-            {
-                string json = reader.ReadToEnd();
-                reader.Close();
-                var list = JsonConvert.DeserializeObject<List<Bank>>(json);
-                string transid;
-                sourceAccount.Balance = sourceAccount.Balance - (amount + charges);
-                destAccount.Balance = destAccount.Balance + amount;
-                sourceAccount.UpdatedOn = DateTime.Now;
-                sourceAccount.UpdatedBy = sourceAccount.AccId;
-                foreach (Bank b in list)
-                {
-                    if (b.Id == sourceBank.Id)
-                    {
-                        Account ac = b.AccLists.Single(m => m.AccName == sourceAccount.AccName);
-                        ac.Balance = sourceAccount.Balance;
-                        ac.UpdatedBy = sourceAccount.AccId;
-                        ac.UpdatedOn = DateTime.Now;
-                        transid = "TXN" + sourceBank.Id + sourceAccount.AccId + DateTime.Now;
-                        ac.TransactionHistory.Add(new Transaction { BankId = sourceBank.Id, DestinationBankId = destBank.Id, TransId = transid, UserId = sourceAccount.AccId, DestinationId = destAccount.AccId, Amount = amount, On = DateTime.Now, Type = TransactionType.Debit, Balance = sourceAccount.Balance });
-                    }
-                    if (b.Id == destBank.Id)
-                    {
-                        Account ac = b.AccLists.Single(m => m.AccName == destAccount.AccName);
-                        ac.Balance = destAccount.Balance;
-                        ac.UpdatedBy = destAccount.AccId;
-                        ac.UpdatedOn = DateTime.Now;
-                        transid = "TXN" + destBank.Id + destAccount.AccId + DateTime.Now;
-                        ac.TransactionHistory.Add(new Transaction { BankId = destBank.Id, DestinationBankId = sourceBank.Id, TransId = transid, UserId = destAccount.AccId, DestinationId = sourceAccount.AccId, Amount = amount, On = DateTime.Now, Type = TransactionType.Credit, Balance = destAccount.Balance });
-                    }
-                }
-                
-                json = JsonConvert.SerializeObject(list);
-                File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
-            }
+
+            string transid = "TXN" + sQLCommands.SelectBankProperty(sourceBankName,"Id") + sQLCommands.SelectAccountProperty(sourceAccountId, "Id") + DateTime.Now;
+            sQLCommands.UpdateAccount(sQLCommands.SelectAccountProperty(sourceAccountId, "Id"), -(amount+charges), DateTime.Now);
+            sQLCommands.InsertTransaction(transid, sQLCommands.SelectAccountProperty(sourceAccountId, "Id"), sQLCommands.SelectBankProperty(sourceBankName, "Id"), Convert.ToDecimal(sQLCommands.SelectAccountProperty(sourceAccountId, "Balance")) - (amount+charges), DateTime.Now, amount, sQLCommands.SelectAccountProperty(destAccountId, "Id"), sQLCommands.SelectBankProperty(destBankName, "Id"));
+            transid = "TXN" + sQLCommands.SelectBankProperty(destBankName, "Id") + sQLCommands.SelectAccountProperty(destAccountId, "Id") + DateTime.Now;
+            sQLCommands.UpdateAccount(sQLCommands.SelectAccountProperty(destAccountId, "Id"), amount, DateTime.Now);
+            sQLCommands.InsertTransaction(transid, sQLCommands.SelectAccountProperty(destAccountId, "Id"), sQLCommands.SelectBankProperty(destBankName, "Id"), Convert.ToDecimal(sQLCommands.SelectAccountProperty(destAccountId, "Balance")) + amount, DateTime.Now, amount, sQLCommands.SelectAccountProperty(sourceAccountId, "Id"), sQLCommands.SelectBankProperty(sourceBankName, "Id"));
+
 
             return true;
         }

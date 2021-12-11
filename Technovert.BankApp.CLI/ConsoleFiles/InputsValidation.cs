@@ -15,8 +15,6 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
             if (!decimal.TryParse(num, out amt))
             {
                 throw new AmountFormatException();
-                /*ConsoleFiles.WriteLine(AmountFormatException.Exception());
-                num = ConsoleFiles.ReadLine();*/
             }
             return amt;
         }
@@ -132,7 +130,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
         {
             Console.WriteLine("Please Enter your Name : ");
         }
-
+        
         public void EnterPassword()
         {
             Console.WriteLine("Please Enter your Password : ");

@@ -8,33 +8,20 @@ using System.Linq;
 using Technovert.BankApp.Models;
 using Technovert.BankApp.Models.Exceptions;
 using Newtonsoft.Json.Linq;
+using DatabaseBank;
 
 namespace Technovert.BankApp.Services
 {
     public class BankService
     {
-        
+        SQLCommands sQLCommands = new SQLCommands();
         public bool AddBank(string name)
-        {
-            string json;
-            using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
+        { 
+            if (sQLCommands.CheckBankAvailability(name))
             {
-                json = reader.ReadToEnd();
-                reader.Close();
-                var list = JsonConvert.DeserializeObject<List<Bank>>(json);
-                foreach (var ba in list)
-                {
-                    if (ba.BankName == name)
-                    {
-                        return false;
-                    }
-                }
-            }
-            /*if (DataStore.Banks.Any(m => m.BankName == name))
-            {
-                //throw new DuplicateBankNameException();
                 return false;
-            }*/
+            }
+            
             Bank bank = new Bank
             {
                 Id = this.GenerateBankId(name),
@@ -42,105 +29,65 @@ namespace Technovert.BankApp.Services
                 CreatedOn = DateTime.Now
 
             };
-
-            /*var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            var directory = Path.GetDirectoryName(location);
-            var path = Path.Combine(directory, "../Bank.json");*/
+            sQLCommands.InsertBank(bank.Id,bank.BankName,bank.CreatedOn);
+            
             DataStore.Banks.Add(bank);
-            if (!(File.Exists(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json")))
+            
+            return true;
+        }
+        public Tuple<string,string> CreateAccount(string BankName, string name, string Password, string mobile, string gender)
+        {
+            string id, CIF;
+            if (sQLCommands.CheckBankAvailability(BankName))
             {
-                json = JsonConvert.SerializeObject(DataStore.Banks);
-                
-                File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
+                string BankId = sQLCommands.SelectBankProperty(BankName,"Id");
+                if (sQLCommands.CheckNewAccountAvailability(name))
+                {
+                    throw new DuplicateUserNameException();
+                }
+                else
+                {
+                    id = this.GenerateUserId(name);
+                    CIF = GenerateCIF();
+                    
+                    sQLCommands.InsertAccount(id, name, 0, Password, mobile, DateTime.Now, gender, name, DateTime.Now, CIF);
+                    string transid = "TXN" + BankId + id + DateTime.Now;
+                    sQLCommands.InsertTransaction(transid, id, BankId, 0, DateTime.Now, 0, "", "");
+                }
             }
             else
             {
-                using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
+                throw new NullValueException("bank");
+            }
+            return Tuple.Create(id,CIF);
+            
+            
+        }
+
+        public string CreateAccountBankStaff(string BankName, string name, string Password, string mobile)
+        {
+            string id;
+            if (sQLCommands.CheckBankAvailability(BankName))
+            {
+                string BankId = sQLCommands.SelectBankProperty(BankName,"Id");
+                if (sQLCommands.CheckNewAccountAvailability(name))
                 {
-                    json = reader.ReadToEnd();
-                    reader.Close();
-                    var list = JsonConvert.DeserializeObject<List<Bank>>(json);
-                    list.Add(bank);
-                    json = JsonConvert.SerializeObject(list);
-                    File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
+                    throw new DuplicateUserNameException();
+                }
+                else
+                {
+                    id = this.GenerateUserId(name);
+                    //AccId = id, AccName = name, Balance = 0, Password = Password, Mobile = mobile, UpdatedOn = DateTime.Now, Gender = gender, CreatedBy = name, CreatedOn = DateTime.Now, CIF = GenerateCIF();
+                    sQLCommands.InsertBankStaff(id, name, Password, mobile);
                     
                 }
             }
-
-            return true;
-        }
-        public Account CreateAccount(string BankName, string name, string Password, string mobile, string gender)
-        {
-            using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
+            else
             {
-                string json = reader.ReadToEnd();
-                reader.Close();
-                var list = JsonConvert.DeserializeObject<List<Bank>>(json);
-                Bank bank = null;
-                Account account = null;
-                foreach (var ba in list)
-                {
-                    if (ba.BankName == BankName)
-                    {
-                        bank = ba;
-                        if (ba.AccLists.Any(m => (m.AccName == name)))
-                        {
-                            throw new DuplicateUserNameException();
-                        }
-                    }
-                }
-                /*Bank bank = DataStore.Banks.Single(m => m.BankName == BankName);
-                if (bank.AccLists.Any(m => m.AccName == name))
-                {
-                    throw new DuplicateUserNameException();
-                }*/
-                if(bank==null) throw new NullValueException("bank");
-                string id = this.GenerateUserId(name);
-                bank.AccLists.Add(new Account { AccId = id, AccName = name, Balance = 0, Password = Password, Mobile = mobile, UpdatedOn = DateTime.Now, Gender = gender, CreatedBy = name, CreatedOn = DateTime.Now, CIF = GenerateCIF() });
-
-
-                account = bank.AccLists.Single(m => m.AccId == id);
-                string transid = "TXN" + bank.Id + account.AccId + DateTime.Now;
-                account.TransactionHistory.Add(new Transaction { TransId = transid, UserId = id, Amount = 0, On = DateTime.Now, Type = TransactionType.Create, Balance = 0 });
-                json = JsonConvert.SerializeObject(list);
-                File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
-
-
-                return account;
+                throw new NullValueException("bank");
             }
-        }
+            return id;
 
-        public BankStaff CreateAccountBankStaff(string BankName, string name, string Password, string mobile)
-        {
-            using (StreamReader reader = new StreamReader(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json"))
-            {
-                string json = reader.ReadToEnd();
-                reader.Close();
-                var list = JsonConvert.DeserializeObject<List<Bank>>(json);
-                Bank bank = null;
-                BankStaff baStaff = null;
-                foreach (var ba in list)
-                {
-                    if (ba.BankName == BankName)
-                    {
-                        bank = ba;
-                        if (ba.bankStaff.Any(m => (m.StaffName == name)))
-                        {
-                            throw new DuplicateUserNameException();
-                        }
-                    }
-                }
-                if (bank == null) throw new NullValueException("bank");
-                string id = this.GenerateUserId(name);
-                bank.bankStaff.Add(new BankStaff { StaffId = id, StaffName = name, password = Password, Mobile = mobile });
-                baStaff = bank.bankStaff.Single(m => m.StaffId == id);
-
-                json = JsonConvert.SerializeObject(list);
-                File.WriteAllText(@"C:\Users\DELL\Downloads\Technovert.BankApplication\Technovert.BankApp.Services\Bank.json", json);
-
-                return baStaff;
-                
-            }
 
         }
         private string GenerateBankId(string BankName)

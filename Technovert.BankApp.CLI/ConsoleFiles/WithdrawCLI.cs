@@ -22,7 +22,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
             try
             {
-                Bank bank = validationService.BankAvailability(BankName);
+                validationService.BankAvailability(BankName);
                 inputsValidation.EnterAccNum("your");
                 AccId = inputsValidation.UserInputString();
                 AccId = inputsValidation.CommonValidation(AccId, "AccId");
@@ -39,7 +39,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
                 try
                 {
-                    Account account = validationService.AccountValidity(BankName, AccId, password);
+                     validationService.AccountValidity(BankName, AccId, password);
 
                     while (true)
                     {
@@ -59,7 +59,7 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
                     }
                     try
                     {
-                        if (withdrawAmount.Withdraw(bank, account, amount)) Console.WriteLine("Withdraw is successful");
+                        if (withdrawAmount.Withdraw(BankName, AccId, amount)) Console.WriteLine("Withdraw is successful");
                     }
                     catch (AccountClosedException e)
                     {

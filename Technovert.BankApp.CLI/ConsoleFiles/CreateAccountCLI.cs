@@ -28,24 +28,24 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
             PasswordEncryption passwordEncryption = new PasswordEncryption();
             password = passwordEncryption.EncryptPlainTextToCipherText(password);
             //ConsoleFiles.WriteLine(password);
-            System.Console.WriteLine("Please Enter your mobile number : ");
+            Console.WriteLine("Please Enter your mobile number : ");
             string mobile = inputsValidation.UserInputString();
             mobile = inputsValidation.CommonValidation(mobile, "Mobile");
 
-            System.Console.WriteLine("Please Specify your Gender : ");
+            Console.WriteLine("Please Specify your Gender : ");
             string gender = inputsValidation.UserInputString();
             gender = inputsValidation.GenderValidation(gender);
 
             try
             {
-                Account account = bankService.CreateAccount(BankName, AccHolderName, password, mobile, gender);
+                Tuple<string,string> account = bankService.CreateAccount(BankName, AccHolderName, password, mobile, gender);
 
-                System.Console.WriteLine("Account created with Account Id : " + account.AccId + ", CIF : " + account.CIF);
+                Console.WriteLine("Account created with Account Id : " + account.Item1 + ", CIF : " + account.Item2);
 
             }
             catch (DuplicateUserNameException e)
             {
-                System.Console.WriteLine(e.Message);
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -75,9 +75,9 @@ namespace Technovert.BankApp.CLI.ConsoleFiles
 
             try
             {
-                BankStaff account = bankService.CreateAccountBankStaff(BankName, AccHolderName, password, mobile);
+                string StaffId = bankService.CreateAccountBankStaff(BankName, AccHolderName, password, mobile);
 
-                Console.WriteLine("Account created with Account Id : " + account.StaffId);
+                Console.WriteLine("Account created with Account Id : " + StaffId);
 
             }
             catch (DuplicateUserNameException e)
